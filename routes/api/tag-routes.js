@@ -9,16 +9,17 @@ router.get('/', async (req, res) => {
   try {
     const tags = await Tag.findAll({
       include: [
-        { model: Product,
-         as: 'tag_belonging_to_product'        
-       }
+        {
+          model: Product,
+          as: 'tag_belonging_to_product'
+        }
       ]
     });
     res.status(200).json(tags);
   } catch (err) {
     console.log(err);  //add this console log, restart server and rerun the request
-        res.status(500).json(err);
-      }
+    res.status(500).json(err);
+  }
 });
 
 router.get('/:id', async (req, res) => {

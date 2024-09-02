@@ -20,11 +20,11 @@ Category.hasMany(Product, {
 Product.belongsToMany(Tag, {
   // Define the third table needed to store the foreign keys
   through: {
-    model: ProductTag,
-    unique: false
+   model: ProductTag,
+  unique: false
   },
   // Define an alias for when data is retrieved
-  as: 'product_belonging_to_tag'
+ as: 'product_belonging_to_tag'
 });
 
 
@@ -36,7 +36,7 @@ Tag.belongsToMany(Product, {
     unique: false
   },
   // Define an alias for when data is retrieved
-  as:'tag_belonging_to_product'
+  as: 'tag_belonging_to_product'
 });
 
 module.exports = {
