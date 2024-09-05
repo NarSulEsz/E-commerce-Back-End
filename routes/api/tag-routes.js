@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
     const tag = await Tag.findByPk(req.params.id, {
       // JOIN with Product, using the ProductTag through table
       include:
-        [{ model: Product, through: ProductTag, as: 'products' }//Include the Product model using the ProductTag through table
+        [{ model: Product, through: ProductTag, as: 'tag_belonging_to_product' }//Include the Product model using the ProductTag through table
         ]
     });
 
@@ -40,6 +40,7 @@ router.get('/:id', async (req, res) => {
 
     res.status(200).json(tag);
   } catch (err) {
+   console.log(err)
     res.status(500).json(err);
   }
 
