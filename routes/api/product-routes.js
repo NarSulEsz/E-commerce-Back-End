@@ -64,15 +64,19 @@ router.post("/", async (req, res) => {
   try {
     const product = await Product.create(req.body);
 
-    if (req.body?.tagIds?.length) {
-      await product.setTags(req.body.tagIds);
+    /*if (req.body?.tagIds?.length) {
+      await product.addTags(req.body.tagIds);
       await product.save();
-    }
+    }*/
 
-    const productWithTags = await Product.findByPk(
-      product.id,
-      { include: [{ model: Tag, as: 'product_belonging_to_tag' }] }
-    );
+      if (req.body?.tagIds?.length) {
+        const tagPromises = req.body.tagIds.map((tagId) => product.addProduct_belonging_to_tag(tagId));
+        await Promise.all(tagPromises);
+      }  
+
+    const productWithTags = await Product.findByPk(product.id, { 
+      include: [{ model: Tag, as: 'product_belonging_to_tag' }] 
+    });
 
     return res.status(200).json(productWithTags);
   } catch (err) {
