@@ -100,7 +100,7 @@ router.put("/:id", async (req, res) => {
 
     const productWithTags = await Product.findByPk(
       product.id,
-      { include: [Tag] },
+      { include: [{ model: Tag, as: 'product_belonging_to_tag' }]  },
     );
 
     return res.status(200).json(productWithTags);
@@ -119,7 +119,7 @@ router.delete("/:id", async (req, res) => {
       }
     });
 
-    if (!product) {
+    if (!products) {
       res.status(404).json({ message: 'No product found with this id!' });
       return;
     }

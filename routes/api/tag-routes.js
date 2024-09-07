@@ -40,7 +40,7 @@ router.get('/:id', async (req, res) => {
 
     res.status(200).json(tag);
   } catch (err) {
-   console.log(err)
+    console.log(err)
     res.status(500).json(err);
   }
 
@@ -49,17 +49,21 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   // create a new tag
   try {
-    const create = await Create.create(req.body);
+    const tag = await Tag.create(req.body);
 
-    if (req.body?.productIds?.length) {
-      await tag.setProdutcs(req.body.productIds);
+    /*if (req.body?.productIds?.length) {
+      await tag.setProducts(req.body.productIds);
       await tag.save();
+    }*/
+
+    if (req.body.productIds?.length) {
+      const productPromises = req.body.productIds.map((productId) => tag.addTag_belonging_to_product(productId));
+      await Promise.all(productPromises);
     }
 
-    const tagWithProducts = await Tag.findByPk(
-      tag.id,
-      { include: [Product] },
-    );
+    const tagWithProducts = await Tag.findByPk(tag.id, {
+      include: [{ model: Product, as: 'tag_belonging_to_product' }]
+    });
 
     return res.status(200).json(tagWithProducts);
   } catch (err) {
@@ -73,17 +77,20 @@ router.put('/:id', async (req, res) => {
   try {
     const tag = await Tag.findByPk(req.params.id);
 
-    if (req.body?.productIds?.length) {
+    /*if (req.body?.productIds?.length) {
       await tag.setProducts(req.body.productIds);
+    }*/
+    if (req.body.productIds?.length) {
+      const productPromises = req.body.productIds.map((productId) => tag.addTag_belonging_to_product(productId));
+      await Promise.all(productPromises);
     }
 
     await tag.update(req.body);
     await tag.save();
 
-    const tagWithProducts = await Tag.findByPk(
-      tag.id,
-      { include: [Product] },
-    );
+    const tagWithProducts = await Tag.findByPk(tag.id, {
+      include: [{ model: Product, as: 'tag_belonging_to_product' }]
+    });
 
     return res.status(200).json(tagWithProducts);
   } catch (err) {
